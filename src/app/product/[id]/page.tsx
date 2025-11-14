@@ -1,6 +1,7 @@
 import { getProductById } from "@/lib/api";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import AddToCartButton from "@/components/AddToCartButton"; // Import the new component
 
 interface ProductPageProps {
   params: {
@@ -49,9 +50,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <p>
             <span className="font-semibold">Stock:</span> {product.stock}
           </p>
-          <button className="mt-4 w-full bg-primary text-primary-foreground py-3 rounded-lg font-semibold hover:bg-primary/90">
-            Add to Cart
-          </button>
+          {/* Replace the old button with the new component */}
+          <AddToCartButton product={product} />
         </div>
       </div>
     </div>

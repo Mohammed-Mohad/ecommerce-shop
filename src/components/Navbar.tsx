@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ShoppingCart, Package } from "lucide-react";
+import { Package } from "lucide-react";
 import SearchBar from "./SearchBar";
+import CartSheet from "./CartSheet"; // Correct the import path
 
 export default function Navbar() {
   return (
@@ -14,10 +15,7 @@ export default function Navbar() {
         <div className="flex flex-1 items-center justify-between space-x-4">
           <SearchBar />
           <nav className="flex items-center space-x-2">
-            <button className="p-2">
-              <ShoppingCart className="h-5 w-5" />
-              <span className="sr-only">Shopping Cart</span>
-            </button>
+            <CartSheet /> {/* This will now work */}
           </nav>
         </div>
       </div>

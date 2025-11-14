@@ -1,38 +1,32 @@
+import axios from "axios";
 import { Product, ProductsResponse, Category } from "@/types";
 
-const API_BASE_URL = "https://dummyjson.com";
+const apiClient = axios.create({
+  baseURL: "https://dummyjson.com",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 /**
- * Fetches a list of all products.
+ * Fetches a list of products with pagination.
+ * @param limit The number of products to return.
+ * @param skip The number of products to skip.
  * @returns A promise that resolves to the products response object.
- * @throws An error if the network response is not ok.
  */
-export async function getProducts(): Promise<ProductsResponse> {
-  const res = await fetch(`${API_BASE_URL}/products`);
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch products");
-  }
-
-  const data: ProductsResponse = await res.json();
-  return data;
+export async function getProducts(limit: number = 20, skip: number = 0): Promise<ProductsResponse> {
+  const response = await apiClient.get<ProductsResponse>(`/products?limit=${limit}&skip=${skip}`);
+  return response.data;
 }
 
 /**
  * Fetches a single product by its ID.
  * @param id The ID of the product to fetch.
  * @returns A promise that resolves to the product object.
- * @throws An error if the network response is not ok.
  */
 export async function getProductById(id: number | string): Promise<Product> {
-  const res = await fetch(`${API_BASE_URL}/products/${id}`);
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch product with id: ${id}`);
-  }
-
-  const data: Product = await res.json();
-  return data;
+  const response = await apiClient.get<Product>(`/products/${id}`);
+  return response.data;
 }
 
 /**
@@ -41,14 +35,8 @@ export async function getProductById(id: number | string): Promise<Product> {
  * @returns A promise that resolves to the products response object.
  */
 export async function searchProducts(query: string): Promise<ProductsResponse> {
-  const res = await fetch(`${API_BASE_URL}/products/search?q=${encodeURIComponent(query)}`);
-
-  if (!res.ok) {
-    throw new Error("Failed to search products");
-  }
-
-  const data: ProductsResponse = await res.json();
-  return data;
+  const response = await apiClient.get<ProductsResponse>(`/products/search?q=${encodeURIComponent(query)}`);
+  return response.data;
 }
 
 /**
@@ -56,14 +44,8 @@ export async function searchProducts(query: string): Promise<ProductsResponse> {
  * @returns A promise that resolves to an array of category objects.
  */
 export async function getCategories(): Promise<Category[]> {
-  const res = await fetch(`${API_BASE_URL}/products/categories`);
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch categories");
-  }
-
-  const data: Category[] = await res.json();
-  return data;
+  const response = await apiClient.get<Category[]>("/products/categories");
+  return response.data;
 }
 
 /**
@@ -72,12 +54,6 @@ export async function getCategories(): Promise<Category[]> {
  * @returns A promise that resolves to the products response object.
  */
 export async function getProductsByCategory(category: string): Promise<ProductsResponse> {
-  const res = await fetch(`${API_BASE_URL}/products/category/${encodeURIComponent(category)}`);
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch products for category: ${category}`);
-  }
-
-  const data: ProductsResponse = await res.json();
-  return data;
+  const response = await apiClient.get<ProductsResponse>(`/products/category/${encodeURIComponent(category)}`);
+  return response.data;
 }

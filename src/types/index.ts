@@ -57,3 +57,7 @@ export interface Category {
   url: string;
 }
 
+export interface CartItem extends Product {
+  quantity: number;
+}
+
