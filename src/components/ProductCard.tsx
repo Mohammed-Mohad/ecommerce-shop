@@ -1,6 +1,8 @@
-import { Product } from "@/types";
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { Star } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -8,8 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Star, Heart } from "lucide-react";
+import FavoriteButton from "@/components/FavoriteButton";
+import { Product } from "@/types";
 
 interface ProductCardProps {
   product: Product;
@@ -25,6 +27,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             alt={product.title}
             fill
             className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
           />
         </Link>
       </CardHeader>
@@ -44,10 +47,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </CardContent>
       <CardFooter className="p-4 pt-0 flex items-center justify-between">
         <p className="text-xl font-bold">${product.price}</p>
-        <Button variant="ghost" size="icon">
-          <Heart className="w-5 h-5" />
-          <span className="sr-only">Favorite</span>
-        </Button>
+        <FavoriteButton product={product} aria-label="Toggle favorite" />
       </CardFooter>
     </Card>
   );

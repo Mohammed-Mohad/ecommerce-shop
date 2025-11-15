@@ -14,8 +14,14 @@ export default function Navbar() {
         
         <div className="flex flex-1 items-center justify-between space-x-4">
           <SearchBar />
-          <nav className="flex items-center space-x-2">
-            <CartSheet /> {/* This will now work */}
+          <nav className="flex items-center space-x-4">
+            <Link
+              href="/favorites"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Favorites
+            </Link>
+            <CartSheet />
           </nav>
         </div>
       </div>
