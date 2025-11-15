@@ -14,8 +14,13 @@ const apiClient = axios.create({
  * @param skip The number of products to skip.
  * @returns A promise that resolves to the products response object.
  */
-export async function getProducts(limit: number = 20, skip: number = 0): Promise<ProductsResponse> {
-  const response = await apiClient.get<ProductsResponse>(`/products?limit=${limit}&skip=${skip}`);
+export async function getProducts(
+  limit: number = 20,
+  skip: number = 0
+): Promise<ProductsResponse> {
+  const response = await apiClient.get<ProductsResponse>("/products", {
+    params: { limit, skip },
+  });
   return response.data;
 }
 
@@ -34,8 +39,18 @@ export async function getProductById(id: number | string): Promise<Product> {
  * @param query The search term.
  * @returns A promise that resolves to the products response object.
  */
-export async function searchProducts(query: string): Promise<ProductsResponse> {
-  const response = await apiClient.get<ProductsResponse>(`/products/search?q=${encodeURIComponent(query)}`);
+export async function searchProducts(
+  query: string,
+  limit: number = 20,
+  skip: number = 0
+): Promise<ProductsResponse> {
+  const response = await apiClient.get<ProductsResponse>("/products/search", {
+    params: {
+      q: query,
+      limit,
+      skip,
+    },
+  });
   return response.data;
 }
 
@@ -53,7 +68,19 @@ export async function getCategories(): Promise<Category[]> {
  * @param category The category name.
  * @returns A promise that resolves to the products response object.
  */
-export async function getProductsByCategory(category: string): Promise<ProductsResponse> {
-  const response = await apiClient.get<ProductsResponse>(`/products/category/${encodeURIComponent(category)}`);
+export async function getProductsByCategory(
+  category: string,
+  limit: number = 20,
+  skip: number = 0
+): Promise<ProductsResponse> {
+  const response = await apiClient.get<ProductsResponse>(
+    `/products/category/${encodeURIComponent(category)}`,
+    {
+      params: {
+        limit,
+        skip,
+      },
+    }
+  );
   return response.data;
 }

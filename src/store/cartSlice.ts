@@ -1,17 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CartItem, Product } from '@/types';
 
-interface CartState {
+export interface CartState {
   items: CartItem[];
+  updatedAt?: number;
 }
 
-const initialState: CartState = {
+export const initialCartState: CartState = {
   items: [],
+  updatedAt: undefined,
 };
 
 const cartSlice = createSlice({
   name: 'cart',
-  initialState,
+  initialState: initialCartState,
   reducers: {
     addItem: (state, action: PayloadAction<Product>) => {
       const existingItem = state.items.find(item => item.id === action.payload.id);
@@ -20,9 +22,11 @@ const cartSlice = createSlice({
       } else {
         state.items.push({ ...action.payload, quantity: 1 });
       }
+      state.updatedAt = Date.now();
     },
     removeItem: (state, action: PayloadAction<number>) => {
       state.items = state.items.filter(item => item.id !== action.payload);
+      state.updatedAt = Date.now();
     },
     updateQuantity: (state, action: PayloadAction<{ id: number; quantity: number }>) => {
       const { id, quantity } = action.payload;
@@ -34,10 +38,12 @@ const cartSlice = createSlice({
           // If quantity is 0 or less, remove the item
           state.items = state.items.filter(item => item.id !== id);
         }
+        state.updatedAt = Date.now();
       }
     },
+    hydrateCart: (_state, action: PayloadAction<CartState>) => action.payload,
   },
 });
 
-export const { addItem, removeItem, updateQuantity } = cartSlice.actions;
+export const { addItem, removeItem, updateQuantity, hydrateCart } = cartSlice.actions;
 export default cartSlice.reducer;

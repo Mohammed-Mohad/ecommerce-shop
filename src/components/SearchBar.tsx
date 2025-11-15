@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
@@ -11,13 +11,19 @@ export default function SearchBar() {
   const defaultQuery = searchParams.get("q") || "";
   const [query, setQuery] = useState(defaultQuery);
 
+  useEffect(() => {
+    setQuery(defaultQuery);
+  }, [defaultQuery]);
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!query) {
-      router.push("/");
-    } else {
-      router.push(`/?q=${encodeURIComponent(query)}`);
+    const params = new URLSearchParams();
+    if (query) {
+      params.set("q", query);
     }
+
+    const href = params.toString() ? `/?${params.toString()}` : "/";
+    router.push(href);
   };
 
   return (

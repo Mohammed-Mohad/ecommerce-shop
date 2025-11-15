@@ -1,16 +1,24 @@
 "use client";
 
-import { useSelector, useDispatch } from 'react-redux';
-import Image from 'next/image';
-import { RootState } from '@/store/store';
-import { removeItem, updateQuantity } from '@/store/cartSlice';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
+import { useSelector, useDispatch } from "react-redux";
+import Image from "next/image";
+import { RootState } from "@/store/store";
+import { removeItem, updateQuantity } from "@/store/cartSlice";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetFooter,
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area"; // We'll add this next
-import { CartIcon } from './CartIcon';
-import { Trash2 } from 'lucide-react';
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { CartIcon } from "./CartIcon";
+import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function CartSheet() {
   const items = useSelector((state: RootState) => state.cart.items);
@@ -22,6 +30,9 @@ export default function CartSheet() {
 
   const handleRemoveItem = (id: number) => {
     dispatch(removeItem(id));
+    toast("Removed from cart", {
+      description: "The item has been removed.",
+    });
   };
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);

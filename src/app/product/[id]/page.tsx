@@ -2,6 +2,7 @@ import { getProductById } from "@/lib/api";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import AddToCartButton from "@/components/AddToCartButton"; // Import the new component
+import FavoriteButton from "@/components/FavoriteButton";
 
 interface ProductPageProps {
   params: {
@@ -50,8 +51,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <p>
             <span className="font-semibold">Stock:</span> {product.stock}
           </p>
-          {/* Replace the old button with the new component */}
-          <AddToCartButton product={product} />
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <AddToCartButton product={product} />
+            <FavoriteButton product={product} showLabel className="flex-1" />
+          </div>
         </div>
       </div>
     </div>

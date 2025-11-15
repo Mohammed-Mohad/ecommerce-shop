@@ -1,6 +1,11 @@
-import { getProducts, searchProducts, getProductsByCategory, getCategories } from "@/lib/api";
-import ProductCard from "@/components/ProductCard";
+import {
+  getProducts,
+  searchProducts,
+  getProductsByCategory,
+} from "@/lib/api";
 import CategoryList from "@/components/CategoryList";
+import ProductsFeed from "@/components/ProductsFeed";
+import { formatCategoryLabel } from "@/lib/format";
 
 interface HomePageProps {
   searchParams: {
@@ -9,46 +14,38 @@ interface HomePageProps {
   };
 }
 
-export default async function Home({ searchParams }: HomePageProps) {
-  const { q, category } = await searchParams;
+const PAGE_SIZE = 12;
 
-  // Determine which API function to call based on search params
+export default async function Home({ searchParams }: HomePageProps) {
+  const params = await searchParams;
+  const q = params?.q;
+  const category = params?.category;
+
   let productsResponse;
   let pageTitle;
-  let currentCategory;
 
   if (q) {
-    productsResponse = await searchProducts(q);
+    productsResponse = await searchProducts(q, PAGE_SIZE, 0);
     pageTitle = `Search results for "${q}"`;
   } else if (category) {
-    productsResponse = await getProductsByCategory(category);
-    const allCategories = await getCategories();
-    const categoryName = allCategories.find(c => c.slug === category)?.name || category;
-    pageTitle = `Products in ${categoryName}`;
-    currentCategory = category;
+    productsResponse = await getProductsByCategory(category, PAGE_SIZE, 0);
+    pageTitle = `Products in ${formatCategoryLabel(category)}`;
   } else {
-    productsResponse = await getProducts();
+    productsResponse = await getProducts(PAGE_SIZE, 0);
     pageTitle = "All Products";
   }
 
-  const { products } = productsResponse;
-
   return (
     <main className="container mx-auto px-4 py-8">
-      <CategoryList currentCategory={currentCategory} />
+      <CategoryList currentCategory={category} />
       <h1 className="text-3xl font-bold my-8">{pageTitle}</h1>
-
-      {products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      ) : (
-        <p className="text-muted-foreground">
-          No products found.
-        </p>
-      )}
+      <ProductsFeed
+        initialProducts={productsResponse.products}
+        initialTotal={productsResponse.total}
+        pageSize={PAGE_SIZE}
+        query={q}
+        category={category}
+      />
     </main>
   );
 }

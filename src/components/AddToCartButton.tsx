@@ -1,10 +1,11 @@
 "use client";
 
-import { useDispatch } from 'react-redux';
-import { addItem } from '@/store/cartSlice';
-import { Product } from '@/types';
-import { Button } from '@/components/ui/button';
-import { ShoppingCart } from 'lucide-react';
+import { useDispatch } from "react-redux";
+import { addItem } from "@/store/cartSlice";
+import { Product } from "@/types";
+import { Button } from "@/components/ui/button";
+import { ShoppingCart } from "lucide-react";
+import { toast } from "sonner";
 
 interface AddToCartButtonProps {
   product: Product;
@@ -15,7 +16,9 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
 
   const handleAddToCart = () => {
     dispatch(addItem(product));
-    // Optional: Add a toast notification here later for user feedback
+    toast.success("Added to cart", {
+      description: `"${product.title}" was added to your cart.`,
+    });
   };
 
   return (
