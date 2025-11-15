@@ -1,5 +1,10 @@
 import axios from "axios";
-import { Product, ProductsResponse, Category } from "@/types";
+import {
+  Product,
+  ProductsResponse,
+  Category,
+  ProductPayload,
+} from "@/types";
 
 const apiClient = axios.create({
   baseURL: "https://dummyjson.com",
@@ -83,4 +88,39 @@ export async function getProductsByCategory(
     }
   );
   return response.data;
+}
+
+/**
+ * Creates a new product.
+ * @param payload Product form data.
+ */
+export async function createProduct(
+  payload: ProductPayload
+): Promise<Product> {
+  const response = await apiClient.post<Product>("/products/add", payload);
+  return response.data;
+}
+
+/**
+ * Updates an existing product by ID.
+ * @param id Product identifier.
+ * @param payload Product form data.
+ */
+export async function updateProduct(
+  id: number | string,
+  payload: Partial<ProductPayload>
+): Promise<Product> {
+  const response = await apiClient.patch<Product>(
+    `/products/${id}`,
+    payload
+  );
+  return response.data;
+}
+
+/**
+ * Deletes a product.
+ * @param id Product identifier.
+ */
+export async function deleteProduct(id: number | string): Promise<void> {
+  await apiClient.delete(`/products/${id}`);
 }

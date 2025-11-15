@@ -1,8 +1,11 @@
 import { getProductById } from "@/lib/api";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import AddToCartButton from "@/components/AddToCartButton"; // Import the new component
+import AddToCartButton from "@/components/AddToCartButton";
 import FavoriteButton from "@/components/FavoriteButton";
+import DeleteProductButton from "@/components/DeleteProductButton";
+import { Button } from "@/components/ui/button";
 
 interface ProductPageProps {
   params: {
@@ -54,6 +57,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <div className="flex flex-col gap-3 sm:flex-row">
             <AddToCartButton product={product} />
             <FavoriteButton product={product} showLabel className="flex-1" />
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button asChild variant="outline">
+              <Link href={`/product/${product.id}/edit`}>Edit Product</Link>
+            </Button>
+            <DeleteProductButton
+              productId={product.id}
+              productTitle={product.title}
+            />
           </div>
         </div>
       </div>

@@ -21,6 +21,12 @@ export default function Navbar() {
             >
               Favorites
             </Link>
+            <Link
+              href="/products/new"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Create Product
+            </Link>
             <CartSheet />
           </nav>
         </div>
