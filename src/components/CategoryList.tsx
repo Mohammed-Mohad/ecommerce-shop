@@ -1,6 +1,7 @@
 import { getCategories } from "@/lib/api";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { formatCategoryLabel } from "@/lib/format";
 
 interface CategoryListProps {
@@ -13,43 +14,39 @@ export default async function CategoryList({
   const categories = await getCategories();
 
   return (
-    <div className="mb-8">
-      <h2 className="text-xl font-semibold mb-4">Categories</h2>
-      <div className="flex flex-wrap gap-2">
-        {/* "All" category link */}
-        <Link
-          href="/"
-          className={cn(
-            "px-4 py-2 border rounded-full text-sm font-medium transition-colors",
-            !currentCategory
-              ? "bg-primary text-primary-foreground hover:bg-primary/90"
-              : "hover:bg-accent hover:text-accent-foreground"
-          )}
-        >
-          All
-        </Link>
-
-        {/* Mapped category links */}
-        {categories.map((category) => {
-          const slug = category.slug ?? category.name;
-          const label = category.name ?? formatCategoryLabel(category.slug);
-          const isActive = currentCategory === slug;
-          return (
-            <Link
-              key={slug}
-              href={`/?category=${encodeURIComponent(slug)}`}
-              className={cn(
-                "px-4 py-2 border rounded-full text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                  : "hover:bg-accent hover:text-accent-foreground"
-              )}
-            >
-              {label}
-            </Link>
-          );
-        })}
+    <section id="categories" className="scroll-mt-24">
+      <div className="text-center">
+        <h2 className="text-3xl font-bold tracking-tight">
+          Browse by Category
+        </h2>
+        <p className="mt-2 text-lg text-muted-foreground">
+          Find the perfect item by exploring our curated categories.
+        </p>
       </div>
-    </div>
+      <ScrollArea className="w-full whitespace-nowrap py-4">
+        <div className="mx-auto flex w-max justify-center gap-2 px-4">
+          <Button asChild variant={!currentCategory ? "default" : "outline"}>
+            <Link href="/">All</Link>
+          </Button>
+          {categories.map((category) => {
+            const slug = category.slug ?? category.name;
+            const label = formatCategoryLabel(slug);
+            const isActive = currentCategory === slug;
+            return (
+              <Button
+                key={slug}
+                asChild
+                variant={isActive ? "default" : "outline"}
+              >
+                <Link href={`/?category=${encodeURIComponent(slug)}`}>
+                  {label}
+                </Link>
+              </Button>
+            );
+          })}
+        </div>
+        <ScrollBar orientation="horizontal" className="mt-2" />
+      </ScrollArea>
+    </section>
   );
 }

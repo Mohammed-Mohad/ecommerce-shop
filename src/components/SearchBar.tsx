@@ -1,11 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export default function SearchBar() {
+interface SearchBarProps {
+  className?: string;
+}
+
+export default function SearchBar({ className }: SearchBarProps = {}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const defaultQuery = searchParams.get("q") || "";
@@ -27,7 +32,10 @@ export default function SearchBar() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative w-full max-w-sm">
+    <form
+      onSubmit={handleSubmit}
+      className={cn("relative w-full max-w-sm", className)}
+    >
       <Input
         type="text"
         placeholder="Search products..."

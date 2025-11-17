@@ -1,63 +1,68 @@
 "use client";
 
-import * as React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Heart } from "lucide-react";
 import { Product } from "@/types";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { RootState } from "@/store/store";
 import { toggleFavorite } from "@/store/favoritesSlice";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-interface FavoriteButtonProps
-  extends React.ComponentPropsWithoutRef<typeof Button> {
+interface FavoriteButtonProps {
   product: Product;
   showLabel?: boolean;
+  className?: string;
 }
 
 export default function FavoriteButton({
   product,
-  className,
   showLabel = false,
-  ...props
+  className,
 }: FavoriteButtonProps) {
   const dispatch = useDispatch();
-  const isFavorite = useSelector(
-    (state: RootState) => Boolean(state.favorites.entities[product.id])
-  );
+  const favorites = useSelector((state: RootState) => state.favorites);
+  const isFavorite = favorites.ids.includes(product.id);
 
-  const handleToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation();
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     dispatch(toggleFavorite(product));
     if (isFavorite) {
       toast("Removed from favorites", {
-        description: `"${product.title}" won’t appear in favorites anymore.`,
+        description: `"${product.title}" has been removed.`,
       });
     } else {
       toast.success("Saved to favorites", {
-        description: `"${product.title}" is now in your favorites list.`,
+        description: `"${product.title}" is now in favorites.`,
       });
     }
   };
 
   return (
     <Button
-      type="button"
-      variant={isFavorite ? "default" : "ghost"}
+      onClick={handleToggleFavorite}
       size={showLabel ? "default" : "icon"}
-      aria-pressed={isFavorite}
-      onClick={handleToggle}
-      className={cn("transition-colors", className)}
-      {...props}
+      className={cn(
+        "rounded-full border border-white/40 bg-white/70 text-foreground shadow-lg backdrop-blur transition",
+        isFavorite && "bg-red-500/90 text-white shadow-red-400/40",
+        showLabel &&
+          "h-12 w-full justify-center rounded-2xl border-primary/40 bg-primary/10 text-primary shadow-none hover:bg-primary/20",
+        className
+      )}
+      aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
     >
       <Heart
         className={cn(
-          "w-5 h-5",
-          isFavorite ? "fill-current" : "text-muted-foreground"
+          "h-5 w-5 transition-all",
+          isFavorite ? "fill-current" : "fill-transparent"
         )}
       />
-      {showLabel && <span>{isFavorite ? "Favorited" : "Add to Favorites"}</span>}
+      {showLabel && (
+        <span className="ml-2 text-sm font-semibold">
+          {isFavorite ? "Favorited" : "Favorite"}
+        </span>
+      )}
     </Button>
   );
 }
