@@ -33,7 +33,15 @@ export default function RootLayout({
             <main className="flex-1">{children}</main>
             <Footer />
           </div>
-          <Toaster richColors />
+          <Toaster
+            richColors
+            position="top-center"
+            toastOptions={{
+              duration: 3500,
+              className:
+                "rounded-xl border border-border/60 bg-card text-foreground shadow-xl shadow-primary/10",
+            }}
+          />
         </StoreProvider>
       </body>
     </html>

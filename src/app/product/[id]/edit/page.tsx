@@ -9,8 +9,8 @@ interface EditProductPageProps {
 }
 
 export default async function EditProductPage({ params }: EditProductPageProps) {
-  const { id } = await params;
-  const product = await getProductById(id).catch(() => null);
+  const resolvedParams = await params;
+  const product = await getProductById(resolvedParams.id).catch(() => null);
 
   if (!product) {
     notFound();
@@ -19,19 +19,20 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
   const categories = await getCategories();
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <div className="max-w-3xl space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold">Edit Product</h1>
-          <p className="text-muted-foreground">
-            Update the product information and save your changes.
+    <main className="container mx-auto px-4 py-12">
+      <div className="mx-auto flex max-w-3xl flex-col gap-8">
+        <div className="text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
+            Update Drop
+          </p>
+          <h1 className="mt-2 text-4xl font-semibold text-foreground">
+            Refine product details
+          </h1>
+          <p className="mt-3 text-muted-foreground">
+            Keep listings fresh with accurate pricing, stock, and imagery.
           </p>
         </div>
-        <ProductForm
-          mode="edit"
-          product={product}
-          categories={categories}
-        />
+        <ProductForm mode="edit" product={product} categories={categories} />
       </div>
     </main>
   );

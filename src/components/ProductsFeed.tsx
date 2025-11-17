@@ -17,6 +17,7 @@ interface ProductsFeedProps {
   pageSize: number;
   query?: string;
   category?: string;
+  initialError?: string | null;
 }
 
 export default function ProductsFeed({
@@ -25,17 +26,18 @@ export default function ProductsFeed({
   pageSize,
   query,
   category,
+  initialError = null,
 }: ProductsFeedProps) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [total, setTotal] = useState(initialTotal);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(initialError);
 
   useEffect(() => {
     setProducts(initialProducts);
     setTotal(initialTotal);
-    setError(null);
-  }, [initialProducts, initialTotal, query, category]);
+    setError(initialError);
+  }, [initialProducts, initialTotal, initialError, query, category]);
 
   const loadedCount = products.length;
   const hasMore = loadedCount < total;

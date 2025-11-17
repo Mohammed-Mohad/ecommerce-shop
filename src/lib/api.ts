@@ -6,12 +6,32 @@ import {
   ProductPayload,
 } from "@/types";
 
+const API_TIMEOUT = 8000;
+
 const apiClient = axios.create({
   baseURL: "https://dummyjson.com",
+  timeout: API_TIMEOUT,
   headers: {
     "Content-Type": "application/json",
   },
 });
+
+function handleAxiosError(error: unknown, fallbackMessage: string) {
+  if (axios.isAxiosError(error)) {
+    if (error.response) {
+      return new Error(
+        (error.response.data as { message?: string })?.message ||
+          fallbackMessage
+      );
+    }
+    if (error.request) {
+      return new Error(
+        "Unable to reach DummyJSON at the moment. Please check your connection and try again."
+      );
+    }
+  }
+  return new Error(fallbackMessage);
+}
 
 /**
  * Fetches a list of products with pagination.
@@ -23,10 +43,14 @@ export async function getProducts(
   limit: number = 20,
   skip: number = 0
 ): Promise<ProductsResponse> {
-  const response = await apiClient.get<ProductsResponse>("/products", {
-    params: { limit, skip },
-  });
-  return response.data;
+  try {
+    const response = await apiClient.get<ProductsResponse>("/products", {
+      params: { limit, skip },
+    });
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, "Failed to load products.");
+  }
 }
 
 /**
@@ -35,8 +59,12 @@ export async function getProducts(
  * @returns A promise that resolves to the product object.
  */
 export async function getProductById(id: number | string): Promise<Product> {
-  const response = await apiClient.get<Product>(`/products/${id}`);
-  return response.data;
+  try {
+    const response = await apiClient.get<Product>(`/products/${id}`);
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, "Failed to load product.");
+  }
 }
 
 /**
@@ -49,14 +77,18 @@ export async function searchProducts(
   limit: number = 20,
   skip: number = 0
 ): Promise<ProductsResponse> {
-  const response = await apiClient.get<ProductsResponse>("/products/search", {
-    params: {
-      q: query,
-      limit,
-      skip,
-    },
-  });
-  return response.data;
+  try {
+    const response = await apiClient.get<ProductsResponse>("/products/search", {
+      params: {
+        q: query,
+        limit,
+        skip,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, "Failed to search products.");
+  }
 }
 
 /**
@@ -64,8 +96,12 @@ export async function searchProducts(
  * @returns A promise that resolves to an array of category objects.
  */
 export async function getCategories(): Promise<Category[]> {
-  const response = await apiClient.get<Category[]>("/products/categories");
-  return response.data;
+  try {
+    const response = await apiClient.get<Category[]>("/products/categories");
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, "Failed to load categories.");
+  }
 }
 
 /**
@@ -78,16 +114,23 @@ export async function getProductsByCategory(
   limit: number = 20,
   skip: number = 0
 ): Promise<ProductsResponse> {
-  const response = await apiClient.get<ProductsResponse>(
-    `/products/category/${encodeURIComponent(category)}`,
-    {
-      params: {
-        limit,
-        skip,
-      },
-    }
-  );
-  return response.data;
+  try {
+    const response = await apiClient.get<ProductsResponse>(
+      `/products/category/${encodeURIComponent(category)}`,
+      {
+        params: {
+          limit,
+          skip,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(
+      error,
+      `Failed to load products for category "${category}".`
+    );
+  }
 }
 
 /**
@@ -97,8 +140,12 @@ export async function getProductsByCategory(
 export async function createProduct(
   payload: ProductPayload
 ): Promise<Product> {
-  const response = await apiClient.post<Product>("/products/add", payload);
-  return response.data;
+  try {
+    const response = await apiClient.post<Product>("/products/add", payload);
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, "Failed to create product.");
+  }
 }
 
 /**
@@ -110,11 +157,15 @@ export async function updateProduct(
   id: number | string,
   payload: Partial<ProductPayload>
 ): Promise<Product> {
-  const response = await apiClient.patch<Product>(
-    `/products/${id}`,
-    payload
-  );
-  return response.data;
+  try {
+    const response = await apiClient.patch<Product>(
+      `/products/${id}`,
+      payload
+    );
+    return response.data;
+  } catch (error) {
+    throw handleAxiosError(error, "Failed to update product.");
+  }
 }
 
 /**
@@ -122,5 +173,9 @@ export async function updateProduct(
  * @param id Product identifier.
  */
 export async function deleteProduct(id: number | string): Promise<void> {
-  await apiClient.delete(`/products/${id}`);
+  try {
+    await apiClient.delete(`/products/${id}`);
+  } catch (error) {
+    throw handleAxiosError(error, "Failed to delete product.");
+  }
 }
