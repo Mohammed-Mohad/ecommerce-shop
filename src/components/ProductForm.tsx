@@ -78,7 +78,7 @@ export default function ProductForm({
     };
   }, [categories, product]);
 
-  const form = useForm<ProductFormInputs, any, ProductFormValues>({
+  const form = useForm<ProductFormInputs, undefined, ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues,
   });
@@ -107,7 +107,8 @@ export default function ProductForm({
         toast.success("Product created", {
           description: `"${created.title}" was created successfully.`,
         });
-        router.push(`/product/${created.id}`);
+        router.push("/#categories");
+        router.refresh();
       } else if (product) {
         const updated = await updateProduct(product.id, payload);
         toast.success("Product updated", {

@@ -15,9 +15,12 @@ import {
   SheetTrigger,
   SheetTitle,
   SheetDescription,
+  SheetClose,
 } from "@/components/ui/sheet";
-import { Separator } from "./ui/separator";
 import CartSheet from "./CartSheet";
+import { ThemeToggle } from "./ThemeToggle";
+import { Separator } from "@/components/ui/separator";
+import AuthMenuEntry from "./AuthMenuEntry";
 
 export default function Navbar() {
   return (
@@ -48,35 +51,27 @@ export default function Navbar() {
 
         {/* Right Side: Actions */}
         <div className="flex flex-1 items-center justify-end gap-2">
-          {/* Desktop Navigation */}
-          <nav className="hidden items-center gap-1 md:flex">
+          <div className="hidden items-center gap-1.5 md:flex">
             <Button
               variant="ghost"
+              size="icon"
               asChild
-              className="gap-1.5 text-muted-foreground"
+              className="text-muted-foreground hover:text-foreground"
             >
-              <Link href="/favorites">
+              <Link href="/favorites" aria-label="Favorites">
                 <Star className="h-4 w-4" />
-                Favorites
               </Link>
             </Button>
-            <Button
-              variant="ghost"
-              asChild
-              className="gap-1.5 text-muted-foreground"
-            >
+            <ThemeToggle variant="icon" />
+            <AuthMenuEntry variant="button" />
+            <CartSheet />
+            <Button size="sm" asChild className="ml-1 gap-1.5">
               <Link href="/products/new">
                 <PlusCircle className="h-4 w-4" />
-                Create
+                New Product
               </Link>
             </Button>
-          </nav>
-
-          <div className="hidden md:block">
-            <Separator orientation="vertical" className="mx-2 h-6" />
           </div>
-
-          <CartSheet />
 
           {/* Mobile Navigation */}
           <div className="md:hidden">
@@ -93,34 +88,46 @@ export default function Navbar() {
                   <SheetDescription className="sr-only">
                     Access navigation links and search
                   </SheetDescription>
-                  <Link href="/" className="flex items-center gap-2">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                      <ShoppingBag className="h-5 w-5" />
-                    </span>
-                    <span className="text-lg font-semibold text-foreground">
-                      MexShop
-                    </span>
-                  </Link>
+                  <SheetClose asChild>
+                    <Link href="/" className="flex items-center gap-2">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                        <ShoppingBag className="h-5 w-5" />
+                      </span>
+                      <span className="text-lg font-semibold text-foreground">
+                        MexShop
+                      </span>
+                    </Link>
+                  </SheetClose>
                 </SheetHeader>
                 <div className="mt-6 flex h-full flex-col">
                   <div className="px-2">
                     <SearchBar />
                   </div>
                   <nav className="mt-6 flex flex-col gap-2 px-2">
-                    <Link
-                      href="/favorites"
-                      className="flex items-center gap-3 rounded-md p-3 text-base font-medium text-foreground/80 transition-colors hover:bg-accent hover:text-foreground"
-                    >
-                      <Star className="h-5 w-5 text-muted-foreground" />
-                      <span>Favorites</span>
-                    </Link>
-                    <Link
-                      href="/products/new"
-                      className="flex items-center gap-3 rounded-md p-3 text-base font-medium text-foreground/80 transition-colors hover:bg-accent hover:text-foreground"
-                    >
-                      <PlusCircle className="h-5 w-5 text-muted-foreground" />
-                      <span>Create Product</span>
-                    </Link>
+                    <SheetClose asChild>
+                      <Link
+                        href="/favorites"
+                        className="flex items-center gap-3 rounded-md p-3 text-base font-medium text-foreground/80 transition-colors hover:bg-accent hover:text-foreground"
+                      >
+                        <Star className="h-5 w-5 text-muted-foreground" />
+                        <span>Favorites</span>
+                      </Link>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <Link
+                        href="/products/new"
+                        className="flex items-center gap-3 rounded-md p-3 text-base font-medium text-foreground/80 transition-colors hover:bg-accent hover:text-foreground"
+                      >
+                        <PlusCircle className="h-5 w-5 text-muted-foreground" />
+                        <span>Create Product</span>
+                      </Link>
+                    </SheetClose>
+                    <div className="mt-2">
+                      <ThemeToggle variant="menu" />
+                    </div>
+                    <div className="mt-2">
+                      <AuthMenuEntry variant="link" />
+                    </div>
                   </nav>
                   <Separator className="my-4" />
                   <div className="px-2">

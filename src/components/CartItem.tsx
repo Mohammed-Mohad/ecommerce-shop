@@ -18,7 +18,7 @@ export default function CartItem({ item }: CartItemProps) {
 
   return (
     <div className="flex items-start gap-4 py-4">
-      <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border">
+      <div className="relative h-20 w-20shrink-0 overflow-hidden rounded-md border">
         <Image
           src={item.thumbnail}
           alt={item.title}

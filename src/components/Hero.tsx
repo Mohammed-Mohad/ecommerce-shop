@@ -3,7 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { ArrowRight, Star, Package, LayoutGrid, Clock, PlusCircle } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronDown,
+  Star,
+  Package,
+  LayoutGrid,
+  Store,
+} from "lucide-react";
 
 const featuredProduct = {
   id: 1,
@@ -31,7 +38,41 @@ const renderStars = (rating: number) => {
   return starElements;
 };
 
-export default function Hero() {
+interface HeroStats {
+  totalProducts: number;
+  totalCategories: number;
+  avgRating: number;
+  brandCount: number;
+}
+
+interface HeroProps {
+  stats: HeroStats;
+}
+
+export default function Hero({ stats }: HeroProps) {
+  const statsItems = [
+    {
+      label: "Live products",
+      value: stats.totalProducts.toLocaleString(),
+      Icon: Package,
+    },
+    {
+      label: "Categories",
+      value: stats.totalCategories.toString(),
+      Icon: LayoutGrid,
+    },
+    {
+      label: "Avg. rating",
+      value: stats.avgRating.toFixed(1),
+      Icon: Star,
+    },
+    {
+      label: "Brands represented",
+      value: stats.brandCount.toString(),
+      Icon: Store,
+    },
+  ];
+
   return (
     <section className="w-full bg-card">
       <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
@@ -51,19 +92,23 @@ export default function Hero() {
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4 lg:justify-start">
               <Button asChild size="lg">
-                <Link href="/products/new">
-                  Add Product <PlusCircle className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="secondary"
-                size="lg"
-              >
                 <Link href="/favorites">
-                  Browse Favorites <ArrowRight className="ml-2 h-4 w-4" />
+                  Browse favorites <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
+              <Button asChild variant="secondary" size="lg">
+                <Link href="/products/new">Add a product</Link>
+              </Button>
+            </div>
+            <div className="mt-4 flex items-center justify-center gap-3 text-sm text-muted-foreground lg:justify-start">
+              <span className="h-px w-12 bg-border" />
+              <Link
+                href="/#categories"
+                className="inline-flex items-center gap-1 font-medium text-primary hover:text-primary/80"
+              >
+                Scroll to categories
+                <ChevronDown className="h-4 w-4" />
+              </Link>
             </div>
           </div>
 
@@ -99,34 +144,15 @@ export default function Hero() {
         {/* Integrated Stats Section */}
         <div className="mt-16 border-t pt-8">
           <div className="grid grid-cols-2 gap-8 text-center md:grid-cols-4">
-            <div className="flex flex-col items-center gap-2">
-              <Package className="h-6 w-6 text-primary" />
-              <div>
-                <p className="text-xl font-bold">100+</p>
-                <p className="text-sm text-muted-foreground">Live Products</p>
+            {statsItems.map(({ label, value, Icon }) => (
+              <div key={label} className="flex flex-col items-center gap-2">
+                <Icon className="h-6 w-6 text-primary" />
+                <div>
+                  <p className="text-xl font-bold">{value}</p>
+                  <p className="text-sm text-muted-foreground">{label}</p>
+                </div>
               </div>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <LayoutGrid className="h-6 w-6 text-primary" />
-              <div>
-                <p className="text-xl font-bold">20+</p>
-                <p className="text-sm text-muted-foreground">Categories</p>
-              </div>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <Star className="h-6 w-6 text-primary" />
-              <div>
-                <p className="text-xl font-bold">4.5/5</p>
-                <p className="text-sm text-muted-foreground">Avg. Rating</p>
-              </div>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <Clock className="h-6 w-6 text-primary" />
-              <div>
-                <p className="text-xl font-bold">24/7</p>
-                <p className="text-sm text-muted-foreground">API Access</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>

@@ -2,13 +2,13 @@ import {
   getProducts,
   searchProducts,
   getProductsByCategory,
+  getCategories,
 } from "@/lib/api";
 import CategoryList from "@/components/CategoryList";
 import ProductsFeed from "@/components/ProductsFeed";
 import { formatCategoryLabel } from "@/lib/format";
 import Hero from "@/components/Hero";
-import { Separator } from "@/components/ui/separator";
-import { ProductsResponse } from "@/types";
+import { Category, ProductsResponse } from "@/types";
 
 interface HomePageProps {
   searchParams: {
@@ -32,6 +32,7 @@ export default async function Home({ searchParams }: HomePageProps) {
   };
   let pageTitle = "All Products";
   let initialError: string | null = null;
+  let categories: Category[] = [];
 
   try {
     if (q) {
@@ -50,12 +51,34 @@ export default async function Home({ searchParams }: HomePageProps) {
         : "We couldn't reach the product service. Please try again.";
   }
 
+  try {
+    categories = await getCategories();
+  } catch {
+    categories = [];
+  }
+
+  const initialProducts = productsResponse.products;
+  const avgRating =
+    initialProducts.length > 0
+      ? initialProducts.reduce((sum, product) => sum + product.rating, 0) /
+        initialProducts.length
+      : 0;
+  const brandCount = new Set(initialProducts.map((product) => product.brand))
+    .size;
+
+  const heroStats = {
+    totalProducts: productsResponse.total,
+    totalCategories: categories.length,
+    avgRating: Number(avgRating.toFixed(1)),
+    brandCount,
+  };
+
   return (
     <main className="flex flex-col">
-      <Hero />
+      <Hero stats={heroStats} />
       <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <section aria-labelledby="category-heading" className="py-8 md:py-12">
-          <CategoryList currentCategory={category} />
+          <CategoryList currentCategory={category} categories={categories} />
         </section>
 
         <section aria-labelledby="products-heading">

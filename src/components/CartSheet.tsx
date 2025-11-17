@@ -12,11 +12,10 @@ import {
   SheetTitle,
   SheetDescription,
   SheetTrigger,
-  SheetFooter,
+  SheetClose,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CartIcon } from "./CartIcon";
 import { Trash2 } from "lucide-react";
@@ -123,9 +122,11 @@ export default function CartSheet({ children, trigger }: CartSheetProps) {
                   <span>Subtotal</span>
                   <span>{formatPrice(subtotal)}</span>
                 </div>
-                <Button size="lg" className="w-full">
-                  Proceed to Checkout
-                </Button>
+                <SheetClose asChild>
+                  <Button asChild size="lg" className="w-full">
+                    <Link href="/checkout">Proceed to Checkout</Link>
+                  </Button>
+                </SheetClose>
               </div>
             </div>
           </>
