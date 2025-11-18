@@ -19,10 +19,11 @@ export default function LoginPage() {
   );
   const userName = useSelector((state: RootState) => state.auth.userName);
   const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (!name.trim()) return;
+    if (!name.trim() || !password.trim()) return;
     dispatch(login({ name: name.trim() }));
     router.push(redirectTo);
   };
@@ -74,6 +75,18 @@ export default function LoginPage() {
                 required
               />
             </div>
+            <div className="space-y-2 text-left">
+              <label className="text-sm font-medium text-foreground">
+                Password
+              </label>
+              <Input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="••••••••"
+                required
+              />
+            </div>
             <Button type="submit" className="w-full">
               Sign in
             </Button>
@@ -86,4 +99,3 @@ export default function LoginPage() {
     </main>
   );
 }
-
