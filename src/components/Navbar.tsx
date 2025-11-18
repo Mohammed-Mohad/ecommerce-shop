@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 import {
@@ -85,7 +85,9 @@ export default function Navbar() {
         {/* Center: Search Bar */}
         <div className="hidden flex-1 items-center justify-center px-8 lg:flex">
           <div className="w-full max-w-md">
-            <SearchBar />
+            <Suspense fallback={<div className="h-10" />}>
+              <SearchBar />
+            </Suspense>
           </div>
         </div>
 
@@ -146,7 +148,9 @@ export default function Navbar() {
                 </SheetHeader>
                 <div className="mt-6 flex h-full flex-col">
                   <div className="px-2">
-                    <SearchBar />
+                    <Suspense fallback={<div className="h-10" />}>
+                      <SearchBar />
+                    </Suspense>
                   </div>
                   <nav className="mt-6 flex flex-col gap-2 px-2">
                     <SheetClose asChild>

@@ -17,7 +17,12 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
     notFound();
   }
 
-  const categories = await getCategories();
+  let categories: Awaited<ReturnType<typeof getCategories>> = [];
+  try {
+    categories = await getCategories();
+  } catch {
+    categories = [];
+  }
 
   return (
     <main className="container mx-auto px-4 py-12">

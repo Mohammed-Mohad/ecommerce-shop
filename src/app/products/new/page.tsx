@@ -3,7 +3,12 @@ import ProductForm from "@/components/ProductForm";
 import AuthGate from "@/components/AuthGate";
 
 export default async function NewProductPage() {
-  const categories = await getCategories();
+  let categories: Awaited<ReturnType<typeof getCategories>> = [];
+  try {
+    categories = await getCategories();
+  } catch {
+    categories = [];
+  }
 
   return (
     <main className="container mx-auto px-4 py-12">
