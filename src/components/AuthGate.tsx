@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
@@ -14,9 +15,31 @@ export default function AuthGate({
   children,
   message = "Please sign in to access this feature.",
 }: AuthGateProps) {
+  const [isHydrated, setIsHydrated] = useState(false);
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
+
+  useEffect(() => {
+    // This flag ensures the server and first client render match before we reveal gated content.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsHydrated(true);
+  }, []);
+
+  if (!isHydrated) {
+    return (
+      <div className="rounded-3xl border border-border/70 bg-card/80 p-8 shadow-primary/5 backdrop-blur-sm">
+        <div
+          className="space-y-4"
+          aria-hidden="true"
+        >
+          <div className="h-6 w-40 animate-pulse rounded-full bg-muted/40" />
+          <div className="h-4 w-2/3 animate-pulse rounded-full bg-muted/20" />
+          <div className="h-10 w-32 animate-pulse rounded-2xl bg-muted/30" />
+        </div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return (
@@ -36,4 +59,3 @@ export default function AuthGate({
 
   return <>{children}</>;
 }
-

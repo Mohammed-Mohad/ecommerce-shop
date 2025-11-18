@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import StoreProvider from "@/components/StoreProvider";
 import { Toaster } from "@/components/ui/sonner";
 import ThemeObserver from "@/components/ThemeObserver";
+import ThemeScript from "@/components/ThemeScript";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -21,7 +22,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="dark">
+      <head>
+        <ThemeScript />
+      </head>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",

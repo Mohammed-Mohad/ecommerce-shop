@@ -1,53 +1,21 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect, useRef } from "react";
-import { animate } from "motion";
-import type { AnimationOptions, DOMKeyframesDefinition } from "motion";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { formatCategoryLabel } from "@/lib/format";
 import { Category } from "@/types";
+import CategoryPillsMotion from "./CategoryPillsMotion";
 
 interface CategoryListProps {
   currentCategory?: string;
   categories: Category[];
 }
 
-type MotionKeyframes = DOMKeyframesDefinition;
-type MotionOptions = AnimationOptions;
+const CATEGORY_SECTION_ID = "category-section";
 
 export default function CategoryList({
   currentCategory,
   categories,
 }: CategoryListProps) {
-  const pillsRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const container = pillsRef.current;
-    if (!container) return;
-
-    const pills = Array.from(
-      container.querySelectorAll<HTMLAnchorElement>("[data-pill]")
-    );
-    if (!pills.length) return;
-
-    const animations = pills.map((pill, index) => {
-      const keyframes: MotionKeyframes = {
-        opacity: [0, 1],
-        transform: ["translateY(8px)", "translateY(0px)"],
-      };
-      const options: MotionOptions = {
-        duration: 0.35,
-        delay: index * 0.05,
-        ease: "easeOut",
-      };
-      return animate(pill, keyframes, options);
-    });
-
-    return () => animations.forEach((control) => control.cancel());
-  }, [categories, currentCategory]);
-
   return (
     <section
       id="categories"
@@ -63,7 +31,7 @@ export default function CategoryList({
       </div>
       <ScrollArea className="w-full whitespace-nowrap py-4">
         <div
-          ref={pillsRef}
+          id={CATEGORY_SECTION_ID}
           className="mx-auto flex w-max justify-center gap-2 px-4"
         >
           <Button asChild variant={!currentCategory ? "default" : "outline"}>
@@ -93,6 +61,7 @@ export default function CategoryList({
         </div>
         <ScrollBar orientation="horizontal" className="mt-2" />
       </ScrollArea>
+      <CategoryPillsMotion containerId={CATEGORY_SECTION_ID} />
     </section>
   );
 }

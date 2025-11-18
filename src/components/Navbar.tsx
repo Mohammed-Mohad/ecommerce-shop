@@ -21,10 +21,8 @@ import {
   SheetDescription,
   SheetClose,
 } from "@/components/ui/sheet";
-import CartSheet from "./CartSheet";
-import { ThemeToggle } from "./ThemeToggle";
+import dynamic from "next/dynamic";
 import { Separator } from "@/components/ui/separator";
-import AuthMenuEntry from "./AuthMenuEntry";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -36,6 +34,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { logout } from "@/store/authSlice";
 import { RootState } from "@/store/store";
+
+const ThemeToggle = dynamic(() => import("./ThemeToggle").then((m) => m.ThemeToggle), {
+  ssr: false,
+});
+const CartSheet = dynamic(() => import("./CartSheet"), { ssr: false });
+const AuthMenuEntry = dynamic(() => import("./AuthMenuEntry"), { ssr: false });
 
 export default function Navbar() {
   const dispatch = useDispatch();

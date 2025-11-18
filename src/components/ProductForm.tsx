@@ -193,7 +193,7 @@ export default function ProductForm({
                   <FormControl>
                     <select
                       {...field}
-                      className="mt-1 h-11 w-full rounded-2xl border border-input bg-white/85 px-4 text-sm text-foreground shadow-inner outline-none transition focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                      className="mt-1 h-11 w-full rounded-2xl border border-input bg-card/80 px-4 text-sm text-foreground shadow-inner outline-none transition focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                     >
                       {categories.map((cat) => (
                         <option key={cat.slug} value={cat.slug}>

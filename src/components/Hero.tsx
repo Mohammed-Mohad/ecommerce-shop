@@ -1,10 +1,5 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
-import { animate } from "motion";
-import type { AnimationOptions, DOMKeyframesDefinition } from "motion";
 import { Button } from "./ui/button";
 import {
   ArrowRight,
@@ -14,6 +9,7 @@ import {
   LayoutGrid,
   Store,
 } from "lucide-react";
+import HeroMotion from "./HeroMotion";
 
 const featuredProduct = {
   id: 1,
@@ -23,6 +19,8 @@ const featuredProduct = {
   thumbnail:
     "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp",
 };
+
+const HERO_SECTION_ID = "hero-showcase";
 
 const renderStars = (rating: number) => {
   const totalStars = 5;
@@ -52,84 +50,17 @@ interface HeroProps {
   stats: HeroStats;
 }
 
-type MotionKeyframes = DOMKeyframesDefinition;
-type MotionOptions = AnimationOptions;
-
 export default function Hero({ stats }: HeroProps) {
-  const heroRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    const hero = heroRef.current;
-    if (!hero) return;
-
-    const heroTargets = hero.querySelectorAll<HTMLElement>("[data-hero-animate]");
-    heroTargets.forEach((element, index) => {
-      const keyframes: MotionKeyframes = {
-        opacity: [0, 1],
-        transform: ["translateY(14px)", "translateY(0px)"],
-      };
-      const options: MotionOptions = {
-        duration: 0.45,
-        delay: index * 0.1,
-        ease: "easeOut",
-      };
-      animate(element, keyframes, options);
-    });
-
-    const featured = hero.querySelector<HTMLElement>("[data-featured-card]");
-    if (featured) {
-      const keyframes: MotionKeyframes = {
-        opacity: [0, 1],
-        transform: ["scale(0.95)", "scale(1)"],
-      };
-      animate(featured, keyframes, { duration: 0.6, delay: 0.2, ease: "easeOut" });
-    }
-
-    const statCards = hero.querySelectorAll<HTMLElement>("[data-stat-card]");
-    statCards.forEach((card, index) => {
-      const keyframes: MotionKeyframes = {
-        opacity: [0, 1],
-        transform: ["translateY(10px)", "translateY(0px)"],
-      };
-      const options: MotionOptions = {
-        duration: 0.4,
-        delay: 0.3 + index * 0.08,
-        ease: "easeOut",
-      };
-      animate(card, keyframes, options);
-    });
-  }, []);
-  const statsItems = [
-    {
-      label: "Live products",
-      value: stats.totalProducts.toLocaleString(),
-      Icon: Package,
-    },
-    {
-      label: "Categories",
-      value: stats.totalCategories.toString(),
-      Icon: LayoutGrid,
-    },
-    {
-      label: "Avg. rating",
-      value: stats.avgRating.toFixed(1),
-      Icon: Star,
-    },
-    {
-      label: "Brands represented",
-      value: stats.brandCount.toString(),
-      Icon: Store,
-    },
-  ];
-
   return (
-    <section ref={heroRef} className="w-full bg-card">
+    <section id={HERO_SECTION_ID} className="w-full bg-card">
       <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.1),rgba(255,255,255,0))]"></div>
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-          {/* Left Column: Text Content */}
           <div className="text-center lg:text-left">
-            <p className="inline-block rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
+            <p
+              className="inline-block rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary"
+              data-hero-animate
+            >
               Curated Marketplace
             </p>
             <h1
@@ -146,8 +77,14 @@ export default function Hero({ stats }: HeroProps) {
               must-haves, powered by a real-world API simulation.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4 lg:justify-start">
-              <Button asChild size="lg" className="opacity-0" role="button">
-                <Link href="/favorites" data-hero-animate>
+              <Button
+                asChild
+                size="lg"
+                className="opacity-0"
+                role="button"
+                data-hero-animate
+              >
+                <Link href="/favorites">
                   Browse favorites <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
@@ -157,10 +94,9 @@ export default function Hero({ stats }: HeroProps) {
                 size="lg"
                 className="opacity-0"
                 role="button"
+                data-hero-animate
               >
-                <Link href="/products/new" data-hero-animate>
-                  Add a product
-                </Link>
+                <Link href="/products/new">Add a product</Link>
               </Button>
             </div>
             <div className="mt-4 flex items-center justify-center gap-3 text-sm text-muted-foreground lg:justify-start">
@@ -175,7 +111,6 @@ export default function Hero({ stats }: HeroProps) {
             </div>
           </div>
 
-          {/* Right Column: Featured Product */}
           <div className="flex justify-center lg:justify-end">
             <Link
               href={`/product/${featuredProduct.id}`}
@@ -208,12 +143,30 @@ export default function Hero({ stats }: HeroProps) {
           </div>
         </div>
 
-        {/* Integrated Stats Section */}
         <div className="mt-16 border-t pt-8">
-          <div
-            className="grid grid-cols-2 gap-8 text-center md:grid-cols-4"
-          >
-            {statsItems.map(({ label, value, Icon }) => (
+          <div className="grid grid-cols-2 gap-8 text-center md:grid-cols-4">
+            {[
+              {
+                label: "Live products",
+                value: stats.totalProducts.toLocaleString(),
+                Icon: Package,
+              },
+              {
+                label: "Categories",
+                value: stats.totalCategories.toString(),
+                Icon: LayoutGrid,
+              },
+              {
+                label: "Avg. rating",
+                value: stats.avgRating.toFixed(1),
+                Icon: Star,
+              },
+              {
+                label: "Brands represented",
+                value: stats.brandCount.toString(),
+                Icon: Store,
+              },
+            ].map(({ label, value, Icon }) => (
               <div
                 key={label}
                 data-stat-card
@@ -229,6 +182,8 @@ export default function Hero({ stats }: HeroProps) {
           </div>
         </div>
       </div>
+      <HeroMotion sectionId={HERO_SECTION_ID} />
     </section>
   );
 }
+
