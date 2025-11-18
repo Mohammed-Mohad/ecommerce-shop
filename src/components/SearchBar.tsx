@@ -27,7 +27,9 @@ export default function SearchBar({ className }: SearchBarProps = {}) {
       params.set("q", query);
     }
 
-    const href = params.toString() ? `/?${params.toString()}` : "/";
+    const href = params.toString()
+      ? `/?${params.toString()}#products`
+      : "/#products";
     router.push(href);
   };
 

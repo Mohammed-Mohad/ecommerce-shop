@@ -77,15 +77,23 @@ export default async function Home({ searchParams }: HomePageProps) {
     <main className="flex flex-col">
       <Hero stats={heroStats} />
       <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <section aria-labelledby="category-heading" className="py-8 md:py-12">
+        <section
+          aria-labelledby="category-heading"
+          className="py-8 md:py-12"
+          id="categories"
+        >
           <CategoryList currentCategory={category} categories={categories} />
         </section>
 
-        <section aria-labelledby="products-heading">
-          <div className="flex flex-col items-baseline justify-between gap-4 border-b border-gray-200 pb-6 pt-12 dark:border-gray-700 md:flex-row">
+        <section
+          aria-labelledby="products-heading"
+          className="py-12"
+          id="products"
+        >
+          <div className="flex flex-col items-baseline justify-between gap-4 border-b pb-6 md:flex-row">
             <h1
               id="products-heading"
-              className="text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-50"
+              className="text-4xl font-bold tracking-tight text-foreground"
             >
               {pageTitle}
             </h1>
