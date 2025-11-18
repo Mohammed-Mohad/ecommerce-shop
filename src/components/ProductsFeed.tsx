@@ -1,7 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import {
   getProducts,
@@ -10,6 +9,7 @@ import {
 } from "@/lib/api";
 import { Product } from "@/types";
 import { Button } from "@/components/ui/button";
+import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 
 interface ProductsFeedProps {
   initialProducts: Product[];
@@ -97,34 +97,36 @@ export default function ProductsFeed({
     };
   }, [fetchMore, hasMore]);
 
-  const content = useMemo(() => {
-    if (products.length === 0 && !isLoading) {
-      return (
+  return (
+    <div className="space-y-8">
+      {products.length === 0 && !isLoading ? (
         <p className="text-muted-foreground">
           No products found. Try adjusting your search or filters.
         </p>
-      );
-    }
-
-    return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
-    );
-  }, [isLoading, products]);
-
-  return (
-    <div className="space-y-4">
-      {content}
-      <div ref={sentinelRef} />
-      {isLoading && (
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          <span>Loading more products…</span>
+      ) : (
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
+          {products.map((product, index) => (
+            <ProductCard key={product.id} product={product} index={index} />
+          ))}
         </div>
       )}
+
+      {hasMore && <div ref={sentinelRef} className="h-4" />}
+
+      {isLoading && products.length > 0 && (
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
+          {Array.from({ length: Math.min(pageSize, 4) }).map((_, idx) => (
+            <ProductCardSkeleton key={idx} />
+          ))}
+        </div>
+      )}
+
+      {!isLoading && !hasMore && products.length > 0 && (
+        <div className="mt-4 text-center text-muted-foreground">
+          You&apos;ve reached the end of the list.
+        </div>
+      )}
+
       {error && (
         <div className="flex flex-wrap items-center gap-2 rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
           <span>{error}</span>
@@ -132,11 +134,6 @@ export default function ProductsFeed({
             Try again
           </Button>
         </div>
-      )}
-      {!hasMore && products.length > 0 && (
-        <p className="text-sm text-muted-foreground">
-          You&apos;ve reached the end of the list.
-        </p>
       )}
     </div>
   );

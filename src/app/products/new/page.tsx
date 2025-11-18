@@ -1,5 +1,6 @@
 import { getCategories } from "@/lib/api";
 import ProductForm from "@/components/ProductForm";
+import AuthGate from "@/components/AuthGate";
 
 export default async function NewProductPage() {
   const categories = await getCategories();
@@ -18,7 +19,9 @@ export default async function NewProductPage() {
             Share the story, set the price, and hit publish in minutes.
           </p>
         </div>
-        <ProductForm categories={categories} mode="create" />
+        <AuthGate message="Sign in to publish new products.">
+          <ProductForm categories={categories} mode="create" />
+        </AuthGate>
       </div>
     </main>
   );

@@ -1,6 +1,7 @@
 import { getCategories, getProductById } from "@/lib/api";
 import ProductForm from "@/components/ProductForm";
 import { notFound } from "next/navigation";
+import AuthGate from "@/components/AuthGate";
 
 interface EditProductPageProps {
   params: {
@@ -32,7 +33,9 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
             Keep listings fresh with accurate pricing, stock, and imagery.
           </p>
         </div>
-        <ProductForm mode="edit" product={product} categories={categories} />
+        <AuthGate message="Sign in to edit existing products.">
+          <ProductForm mode="edit" product={product} categories={categories} />
+        </AuthGate>
       </div>
     </main>
   );

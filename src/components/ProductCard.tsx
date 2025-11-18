@@ -10,46 +10,50 @@ import { Star } from "lucide-react";
 
 interface ProductCardProps {
   product: Product;
+  index: number;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, index }: ProductCardProps) {
   const categoryLabel = product.category.replace(/-/g, " ");
   return (
-    <div className="group flex flex-col overflow-hidden rounded-3xl border border-border/70 bg-card/90 text-card-foreground shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
-      <div className="relative">
-        <Link href={`/product/${product.id}`} className="block">
-          <div className="relative aspect-square w-full overflow-hidden bg-gradient-to-br from-muted to-white">
-            <Image
-              src={product.thumbnail}
-              alt={product.title}
-              fill
-              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-              className="object-contain p-6 transition-transform duration-500 group-hover:scale-105"
-            />
-          </div>
-        </Link>
-        <div className="absolute top-3 right-3">
-          <FavoriteButton product={product} />
+    <div
+      className="group relative flex animate-in flex-col overflow-hidden rounded-2xl border border-border/70 bg-card/90 text-card-foreground shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg fade-in slide-in-from-bottom-4"
+      style={{ "--index": index } as React.CSSProperties}
+    >
+      <Link href={`/product/${product.id}`} className="block">
+        <div className="relative aspect-square w-full overflow-hidden bg-gradient-to-br from-muted/50 to-background">
+          <Image
+            src={product.thumbnail}
+            alt={product.title}
+            fill
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+            className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
+          />
         </div>
+      </Link>
+      <div className="absolute top-2 right-2 z-10">
+        <FavoriteButton product={product} />
       </div>
 
-      <div className="flex flex-1 flex-col p-5">
-        <div className="flex-1 space-y-2">
-          <p className="inline-flex rounded-full bg-secondary/70 px-3 py-1 text-xs font-medium capitalize text-secondary-foreground">
+      <div className="flex flex-1 flex-col p-4">
+        <div className="flex-1 space-y-1.5">
+          <p className="inline-flex rounded-full bg-secondary/70 px-2.5 py-0.5 text-xs font-medium capitalize text-secondary-foreground">
             {categoryLabel}
           </p>
-          <h3 className="text-lg font-semibold leading-tight">
+          <h3 className="font-semibold leading-tight text-foreground">
             <Link href={`/product/${product.id}`}>{product.title}</Link>
           </h3>
-          <div className="flex items-center justify-between pt-2">
-            <p className="text-xl font-bold">{formatPrice(product.price)}</p>
+          <div className="flex items-center justify-between pt-1">
+            <p className="text-lg font-bold text-foreground">
+              {formatPrice(product.price)}
+            </p>
             <div className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
               <Star className="h-4 w-4 text-yellow-400" fill="currentColor" />
               {product.rating.toFixed(1)}
             </div>
           </div>
         </div>
-        <div className="mt-5">
+        <div className="mt-4">
           <AddToCartButton product={product} />
         </div>
       </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Heart } from "lucide-react";
 import { Product } from "@/types";
@@ -23,6 +24,11 @@ export default function FavoriteButton({
   const dispatch = useDispatch();
   const favorites = useSelector((state: RootState) => state.favorites);
   const isFavorite = favorites.ids.includes(product.id);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -38,6 +44,27 @@ export default function FavoriteButton({
       });
     }
   };
+
+  if (!isMounted) {
+    return (
+      <Button
+        size={showLabel ? "default" : "icon"}
+        className={cn(
+          "rounded-full border border-white/40 bg-white/70 text-foreground shadow-lg backdrop-blur transition",
+          showLabel &&
+            "h-12 w-full justify-center rounded-2xl border-primary/40 bg-primary/10 text-primary shadow-none hover:bg-primary/20",
+          className
+        )}
+        disabled
+        aria-label="Loading favorite state"
+      >
+        <Heart className="h-5 w-5 text-muted-foreground" />
+        {showLabel && (
+          <span className="ml-2 text-sm font-semibold">Favorite</span>
+        )}
+      </Button>
+    );
+  }
 
   return (
     <Button

@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import StoreProvider from "@/components/StoreProvider";
 import { Toaster } from "@/components/ui/sonner";
+import ThemeObserver from "@/components/ThemeObserver";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -28,6 +29,7 @@ export default function RootLayout({
         )}
       >
         <StoreProvider>
+          <ThemeObserver />
           <div className="relative flex min-h-screen flex-col">
             <Navbar />
             <main className="flex-1">{children}</main>
