@@ -3,6 +3,9 @@
 import { useSelector, useDispatch } from "react-redux";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useRef } from "react";
+import { animate } from "motion";
+import type { AnimationOptions, DOMKeyframesDefinition } from "motion";
 import { RootState } from "@/store/store";
 import { removeItem, updateQuantity } from "@/store/cartSlice";
 import {
@@ -22,6 +25,9 @@ import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { formatPrice } from "@/lib/format";
 
+type MotionKeyframes = DOMKeyframesDefinition;
+type MotionOptions = AnimationOptions;
+
 interface CartSheetProps {
   trigger?: React.ReactNode;
   children?: React.ReactNode;
@@ -30,6 +36,34 @@ interface CartSheetProps {
 export default function CartSheet({ children, trigger }: CartSheetProps) {
   const items = useSelector((state: RootState) => state.cart.items);
   const dispatch = useDispatch();
+  const listRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const container = listRef.current;
+    if (!container) return;
+
+    const rows = Array.from(
+      container.querySelectorAll<HTMLDivElement>("[data-cart-row]")
+    );
+    if (!rows.length) return;
+
+    const animations = rows.map((row, index) => {
+      row.style.opacity = "0";
+      row.style.transform = "translateX(-8px)";
+      const keyframes: MotionKeyframes = {
+        opacity: [0, 1],
+        transform: ["translateX(-8px)", "translateX(0px)"],
+      };
+      const options: MotionOptions = {
+        duration: 0.3,
+        delay: index * 0.05,
+        ease: "easeOut",
+      };
+      return animate(row, keyframes, options);
+    });
+
+    return () => animations.forEach((control) => control.cancel());
+  }, [items.length]);
 
   const handleQuantityChange = (id: number, quantity: number) => {
     dispatch(updateQuantity({ id, quantity: Number(quantity) }));
@@ -64,10 +98,17 @@ export default function CartSheet({ children, trigger }: CartSheetProps) {
         {items.length > 0 ? (
           <>
             <ScrollArea className="flex-1 min-h-0 px-6">
-              <div className="flex flex-col divide-y divide-border/60 py-4">
+              <div
+                ref={listRef}
+                className="flex flex-col divide-y divide-border/60 py-4"
+              >
                 {items.map((item) => (
-                  <div key={item.id} className="flex gap-4 py-4">
-                    <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg border bg-muted">
+                  <div
+                    key={item.id}
+                    data-cart-row
+                    className="flex gap-4 py-4"
+                  >
+                    <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border bg-muted">
                       <Image
                         src={item.thumbnail}
                         alt={item.title}
@@ -81,7 +122,7 @@ export default function CartSheet({ children, trigger }: CartSheetProps) {
                         <p className="font-semibold leading-tight text-foreground">
                           {item.title}
                         </p>
-                        <p className="flex-shrink-0 font-medium text-foreground">
+                        <p className="shrink-0 font-medium text-foreground">
                           {formatPrice(item.price)}
                         </p>
                       </div>

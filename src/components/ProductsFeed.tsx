@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { animate } from "motion";
 import ProductCard from "@/components/ProductCard";
 import {
   getProducts,
@@ -72,6 +73,7 @@ export default function ProductsFeed({
   }, [category, hasMore, isLoading, loadedCount, pageSize, query]);
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const loadingRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!hasMore) return;
@@ -97,6 +99,20 @@ export default function ProductsFeed({
     };
   }, [fetchMore, hasMore]);
 
+  useEffect(() => {
+    if (!isLoading || products.length === 0) return;
+    const container = loadingRef.current;
+    if (!container) return;
+
+    const controls = animate(
+      container,
+      { opacity: [0, 1], y: [8, 0] },
+      { duration: 0.3, ease: "easeOut" }
+    );
+
+    return () => controls.cancel();
+  }, [isLoading, products.length]);
+
   return (
     <div className="space-y-8">
       {products.length === 0 && !isLoading ? (
@@ -105,8 +121,8 @@ export default function ProductsFeed({
         </p>
       ) : (
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
-          {products.map((product, index) => (
-            <ProductCard key={product.id} product={product} index={index} />
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       )}
@@ -114,7 +130,10 @@ export default function ProductsFeed({
       {hasMore && <div ref={sentinelRef} className="h-4" />}
 
       {isLoading && products.length > 0 && (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
+        <div
+          ref={loadingRef}
+          className="grid grid-cols-2 gap-4 opacity-0 md:grid-cols-3 lg:grid-cols-4 md:gap-6"
+        >
           {Array.from({ length: Math.min(pageSize, 4) }).map((_, idx) => (
             <ProductCardSkeleton key={idx} />
           ))}

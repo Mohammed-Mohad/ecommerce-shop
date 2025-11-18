@@ -7,11 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 
-interface AddToCartButtonProps {
-  product: Product;
-}
-
-export default function AddToCartButton({ product }: AddToCartButtonProps) {
+export default function AddToCartButton({ product }: { product: Product }) {
   const dispatch = useDispatch();
 
   const handleAddToCart = (e: React.MouseEvent) => {

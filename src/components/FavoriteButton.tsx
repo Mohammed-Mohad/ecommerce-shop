@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Heart } from "lucide-react";
 import { Product } from "@/types";
@@ -23,11 +23,15 @@ export default function FavoriteButton({
 }: FavoriteButtonProps) {
   const dispatch = useDispatch();
   const favorites = useSelector((state: RootState) => state.favorites);
-  const isFavorite = favorites.ids.includes(product.id);
-  const [isMounted, setIsMounted] = useState(false);
+  const isFavorite = useMemo(
+    () => favorites.ids.includes(product.id),
+    [favorites.ids, product.id]
+  );
+  const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
+    const id = window.requestAnimationFrame(() => setHasMounted(true));
+    return () => window.cancelAnimationFrame(id);
   }, []);
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
@@ -45,49 +49,30 @@ export default function FavoriteButton({
     }
   };
 
-  if (!isMounted) {
-    return (
-      <Button
-        size={showLabel ? "default" : "icon"}
-        className={cn(
-          "rounded-full border border-white/40 bg-white/70 text-foreground shadow-lg backdrop-blur transition",
-          showLabel &&
-            "h-12 w-full justify-center rounded-2xl border-primary/40 bg-primary/10 text-primary shadow-none hover:bg-primary/20",
-          className
-        )}
-        disabled
-        aria-label="Loading favorite state"
-      >
-        <Heart className="h-5 w-5 text-muted-foreground" />
-        {showLabel && (
-          <span className="ml-2 text-sm font-semibold">Favorite</span>
-        )}
-      </Button>
-    );
-  }
-
   return (
     <Button
       onClick={handleToggleFavorite}
       size={showLabel ? "default" : "icon"}
       className={cn(
         "rounded-full border border-white/40 bg-white/70 text-foreground shadow-lg backdrop-blur transition",
-        isFavorite && "bg-red-500/90 text-white shadow-red-400/40",
+        hasMounted && isFavorite && "bg-red-500/90 text-white shadow-red-400/40",
         showLabel &&
           "h-12 w-full justify-center rounded-2xl border-primary/40 bg-primary/10 text-primary shadow-none hover:bg-primary/20",
         className
       )}
-      aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+      aria-label={
+        hasMounted && isFavorite ? "Remove from favorites" : "Add to favorites"
+      }
     >
       <Heart
         className={cn(
           "h-5 w-5 transition-all",
-          isFavorite ? "fill-current" : "fill-transparent"
+          hasMounted && isFavorite ? "fill-current" : "fill-transparent"
         )}
       />
       {showLabel && (
         <span className="ml-2 text-sm font-semibold">
-          {isFavorite ? "Favorited" : "Favorite"}
+          {hasMounted && isFavorite ? "Favorited" : "Favorite"}
         </span>
       )}
     </Button>
